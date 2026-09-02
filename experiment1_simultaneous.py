@@ -72,12 +72,34 @@ if os.path.exists(csv_filename):
 
 # Create window
 try:
-    win = visual.Window([1920, 1080], fullscr=True, units='height', color=[0,0,0])
-except:
-    win = visual.Window([1400, 900], fullscr=False, units='height', color=[0,0,0])
+    win = visual.Window([1920, 1080], fullscr=True, units='height', color=[0,0,0], allowGUI=False)
+except Exception as e:
+    print(f"Fullscreen failed: {e}")
+    try:
+        win = visual.Window([1400, 900], fullscr=False, units='height', color=[0,0,0])
+    except Exception as e2:
+        print(f"Window creation failed: {e2}")
+        input("Press Enter to exit...")
+        core.quit()
 
-frameRate = win.getActualFrameRate()
-frameDur = 1.0/60.0 if frameRate is None else 1.0/round(frameRate)
+# Measure frame rate (show message while measuring)
+try:
+    measuring_text = visual.TextStim(win, text='Measuring frame rate...\nPlease wait...', height=0.05)
+    measuring_text.draw()
+    win.flip()
+    
+    frameRate = win.getActualFrameRate()
+    frameDur = 1.0/60.0 if frameRate is None else 1.0/round(frameRate)
+    
+    # Show completion
+    ready_text = visual.TextStim(win, text='Ready!\n\nStarting experiment...', height=0.05)
+    ready_text.draw()
+    win.flip()
+    core.wait(1.0)
+except Exception as e:
+    print(f"Frame rate measurement error: {e}")
+    frameRate = 60.0
+    frameDur = 1.0/60.0
 
 globalClock = core.Clock()
 
@@ -342,7 +364,23 @@ D = DIFFERENT (at least 1 changed)
 Press SPACE to start practice.""", keys=['space'])
 
 # Practice
-practice_trials = data.importConditions('conditions/practice_conditions.csv')
+try:
+    practice_trials = data.importConditions('conditions/practice_conditions.csv')
+except Exception as e:
+    error_msg = f"""ERROR: Cannot load practice conditions file!
+
+Error: {str(e)}
+
+Please make sure:
+1. The 'conditions' folder exists
+2. The file 'practice_conditions.csv' is in the conditions folder
+
+Press SPACE to exit."""
+    show_text(error_msg, keys=['space'])
+    csv_file.close()
+    win.close()
+    core.quit()
+
 for trial in practice_trials[:6]:
     run_trial(trial)
 
@@ -358,7 +396,23 @@ Press SPACE to begin the main experiment.
 You will complete 144 trials with breaks every 36 trials.""", keys=['space'])
 
 # Main experiment
-main_trials = data.importConditions('conditions/experiment1_conditions.csv')
+try:
+    main_trials = data.importConditions('conditions/experiment1_conditions.csv')
+except Exception as e:
+    error_msg = f"""ERROR: Cannot load main experiment conditions file!
+
+Error: {str(e)}
+
+Please make sure:
+1. The 'conditions' folder exists
+2. The file 'experiment1_conditions.csv' is in the conditions folder
+
+Press SPACE to exit."""
+    show_text(error_msg, keys=['space'])
+    csv_file.close()
+    win.close()
+    core.quit()
+
 random.shuffle(main_trials)
 
 for i, trial in enumerate(main_trials):
