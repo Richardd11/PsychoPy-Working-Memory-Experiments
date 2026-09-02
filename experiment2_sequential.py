@@ -70,15 +70,31 @@ if os.path.exists(csv_filename):
         csv_filename = filename + f'_{datetime.now().strftime("%H%M%S")}_data.csv'
 
 # Create window
+print("Creating experiment window...")
 try:
+    # Try fullscreen first
     win = visual.Window([1920, 1080], fullscr=True, units='height', color=[0,0,0], allowGUI=False)
+    print("Fullscreen window created successfully")
 except Exception as e:
     print(f"Fullscreen failed: {e}")
+    print("Trying windowed mode without advanced graphics...")
     try:
-        win = visual.Window([1400, 900], fullscr=False, units='height', color=[0,0,0])
+        # Try windowed mode with safer settings
+        win = visual.Window(
+            size=[1400, 900], 
+            fullscr=False, 
+            units='height', 
+            color=[0,0,0],
+            allowGUI=True,
+            useFBO=False,  # Disable framebuffer objects (can cause shader errors)
+            useRetina=False  # Disable retina support
+        )
+        print("Windowed mode created successfully")
     except Exception as e2:
-        print(f"Window creation failed: {e2}")
-        input("Press Enter to exit...")
+        print(f"Window creation failed completely: {e2}")
+        print("\nYour graphics card may not support the required features.")
+        print("Please update your graphics card drivers.")
+        input("\nPress Enter to exit...")
         core.quit()
 
 # Measure frame rate (show message while measuring)
