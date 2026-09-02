@@ -52,3 +52,6 @@ desktop.ini
 
 # Generated client delivery packages
 *.zip
+
+# Local spreadsheet previews and verification artifacts
+outputs/

@@ -35,6 +35,12 @@ echo.
 "%PSYCHOPY_PYTHON%" -u "%~dp0experiment_launcher.py" "%~dp0%EXPERIMENT_FILE%"
 set "RUN_RESULT=%ERRORLEVEL%"
 
+echo.
+echo Creating professional Excel output...
+"%PSYCHOPY_PYTHON%" -u "%~dp0professional_excel.py" --data-dir "%~dp0data"
+set "EXCEL_RESULT=%ERRORLEVEL%"
+
+if not "%EXCEL_RESULT%"=="0" goto EXCEL_FAILED
 if "%RUN_RESULT%"=="0" goto FINISHED
 echo.
 echo ===============================================
@@ -47,9 +53,20 @@ echo.
 pause
 exit /b %RUN_RESULT%
 
+:EXCEL_FAILED
+echo.
+echo ===============================================
+echo The raw CSV data was saved, but Excel formatting failed.
+echo ===============================================
+echo.
+echo Please send the console screenshot to the researcher.
+echo.
+pause
+exit /b 1
+
 :FINISHED
 echo.
-echo Experiment finished. Data is saved in the data folder.
+echo Experiment finished. CSV and professional Excel files are saved in the data folder.
 timeout /t 3 /nobreak >nul
 exit /b 0
 
