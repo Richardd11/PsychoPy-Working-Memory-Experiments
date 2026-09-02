@@ -124,21 +124,44 @@ THOUGHT_PROBE_CATEGORIES = {
 # ============================================
 # DATA FILE
 # ============================================
-csv_file = open(csv_filename, 'w', newline='', encoding='utf-8')
-csv_writer = csv.writer(csv_file)
-csv_writer.writerow([
-    'participant', 'session', 'date', 'age', 'gender',
-    'trial_number', 'load_condition', 'change_condition', 'changed_position',
-    'original_color_1', 'original_color_2', 'original_color_3', 'original_color_4',
-    'test_color_1', 'test_color_2', 'test_color_3', 'test_color_4',
-    'parity_digit_1', 'parity_response_1', 'parity_correct_1', 'parity_rt_1',
-    'parity_digit_2', 'parity_response_2', 'parity_correct_2', 'parity_rt_2',
-    'parity_digit_3', 'parity_response_3', 'parity_correct_3', 'parity_rt_3',
-    'parity_digit_4', 'parity_response_4', 'parity_correct_4', 'parity_rt_4',
-    'memory_response', 'memory_correct', 'memory_rt',
-    'thought_probe_response', 'thought_probe_label', 'thought_probe_rt',
-    'trial_start_time', 'trial_end_time', 'trial_duration'
-])
+print("Creating data file...")
+try:
+    # Create data folder if it doesn't exist
+    import os
+    if not os.path.exists('data'):
+        os.makedirs('data')
+        print("Created 'data' folder")
+    
+    csv_file = open(csv_filename, 'w', newline='', encoding='utf-8')
+    csv_writer = csv.writer(csv_file)
+    csv_writer.writerow([
+        'participant', 'session', 'date', 'age', 'gender',
+        'trial_number', 'load_condition', 'change_condition', 'changed_position',
+        'original_color_1', 'original_color_2', 'original_color_3', 'original_color_4',
+        'test_color_1', 'test_color_2', 'test_color_3', 'test_color_4',
+        'parity_digit_1', 'parity_response_1', 'parity_correct_1', 'parity_rt_1',
+        'parity_digit_2', 'parity_response_2', 'parity_correct_2', 'parity_rt_2',
+        'parity_digit_3', 'parity_response_3', 'parity_correct_3', 'parity_rt_3',
+        'parity_digit_4', 'parity_response_4', 'parity_correct_4', 'parity_rt_4',
+        'memory_response', 'memory_correct', 'memory_rt',
+        'thought_probe_response', 'thought_probe_label', 'thought_probe_rt',
+        'trial_start_time', 'trial_end_time', 'trial_duration'
+    ])
+    print(f"Data file created: {csv_filename}")
+except Exception as e:
+    print(f"ERROR creating data file: {e}")
+    error_text = visual.TextStim(win, text=f"""ERROR: Cannot create data file!
+
+Error: {str(e)}
+
+Make sure you have write permissions in this folder.
+
+Press SPACE to exit.""", height=0.04, wrapWidth=1.5, color='white')
+    error_text.draw()
+    win.flip()
+    event.waitKeys(keyList=['space', 'escape'])
+    win.close()
+    core.quit()
 
 # ============================================
 # HELPER FUNCTIONS
