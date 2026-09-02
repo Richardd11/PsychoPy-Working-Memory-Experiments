@@ -22,9 +22,12 @@ Delivered: 2026-09-02
 - **`conditions/experiment1_conditions.csv`** - 144 main trials
 - **`conditions/experiment2_conditions.csv`** - 144 main trials
 
-### Data Enhancement:
-- **`enhance_data.py`** - Convert CSV to formatted Excel with colors
-- **`ENHANCE_DATA.bat`** - Windows launcher for enhancement tool
+### Data Tools:
+- **`export_to_excel.py`** - ✨ Convert CSV to beautifully formatted Excel
+- **`EXPORT_TO_EXCEL.bat`** - 🚀 Windows launcher (one-click conversion!)
+- **`enhance_data.py`** - Advanced data analysis with outlier detection
+- **`ENHANCE_DATA.bat`** - Windows launcher for analysis
+- **`analyze_data.py`** - Basic data summary and statistics
 
 ### Documentation:
 - **`DATA_DICTIONARY.md`** - Complete description of all data variables
@@ -123,6 +126,24 @@ P001_Experiment2_Sequential_2026_Sep02_1500_data.csv
 - Timestamps
 
 **See `DATA_DICTIONARY.md` for complete variable descriptions.**
+
+### 🎨 NEW: Professional Excel Export
+After collecting data, convert CSV files to beautifully formatted Excel:
+
+**Quick Method:**
+```
+Double-click: EXPORT_TO_EXCEL.bat
+```
+
+**Features:**
+- ✅ Color-coded accuracy (Green=Correct, Red=Incorrect)
+- 📊 Alternating row colors for readability
+- 📐 Centered, professional text alignment
+- 📈 Automatic summary statistics sheet
+- 🎯 Performance breakdown by load condition
+- 📏 Auto-adjusted column widths
+
+**See `EXCEL_EXPORT_GUIDE.md` for detailed instructions.**
 
 ---
 
