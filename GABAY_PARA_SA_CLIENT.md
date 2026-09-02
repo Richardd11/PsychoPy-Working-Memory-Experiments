@@ -336,13 +336,14 @@ pip install psychopy pandas openpyxl matplotlib scipy
 
 ---
 
-### ❌ **Problem: Data folder not found**
+### ❌ **Problem: Window closes too fast / Auto-close**
 
 **Solution:**
 ```
-The data/ folder is auto-created when you run experiments.
-Kung wala pa gid, create manually:
-Right-click > New > Folder > name it "data"
+The experiment now has a 3-second delay before closing.
+If running from PsychoPy Coder:
+- Use the batch files (RUN_EXPERIMENT1.bat) instead
+- Or wait for "Closing in 3 seconds..." message
 ```
 
 ---

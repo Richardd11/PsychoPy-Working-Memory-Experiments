@@ -378,6 +378,19 @@ Data saved in: data/ folder
 
 Press SPACE to exit.""", keys=['space'])
 
+# Final pause before closing (prevents auto-close in Coder)
+final_msg = visual.TextStim(win, text="""Thank you!
+
+Closing in 3 seconds...
+
+(Press ESC to close immediately)""", height=0.05, wrapWidth=1.5, color='white')
+final_msg.draw()
+win.flip()
+
+# Wait 3 seconds or until ESC pressed
+event.clearEvents()
+core.wait(3.0, hogCPUperiod=0.2)
+
 csv_file.close()
 win.close()
 core.quit()
