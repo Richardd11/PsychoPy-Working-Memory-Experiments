@@ -16,9 +16,9 @@ FRIENDLY_HEADERS = {
     "age": "Age",
     "gender": "Gender",
     "trial_number": "Trial Number",
-    "load_condition": "Cognitive Load",
+    "load_condition": "Cognitive Load Level",
     "change_condition": "Change Condition",
-    "changed_position": "Changed Position",
+    "changed_position": "Changed Square Position",
     "original_color_1": "Original Color 1",
     "original_color_2": "Original Color 2",
     "original_color_3": "Original Color 3",
@@ -30,28 +30,39 @@ FRIENDLY_HEADERS = {
     "parity_digit_1": "Parity Digit 1",
     "parity_response_1": "Parity Response 1",
     "parity_correct_1": "Parity Result 1",
-    "parity_rt_1": "Parity RT 1 (s)",
+    "parity_rt_1": "Parity Reaction Time 1 (seconds)",
     "parity_digit_2": "Parity Digit 2",
     "parity_response_2": "Parity Response 2",
     "parity_correct_2": "Parity Result 2",
-    "parity_rt_2": "Parity RT 2 (s)",
+    "parity_rt_2": "Parity Reaction Time 2 (seconds)",
     "parity_digit_3": "Parity Digit 3",
     "parity_response_3": "Parity Response 3",
     "parity_correct_3": "Parity Result 3",
-    "parity_rt_3": "Parity RT 3 (s)",
+    "parity_rt_3": "Parity Reaction Time 3 (seconds)",
     "parity_digit_4": "Parity Digit 4",
     "parity_response_4": "Parity Response 4",
     "parity_correct_4": "Parity Result 4",
-    "parity_rt_4": "Parity RT 4 (s)",
+    "parity_rt_4": "Parity Reaction Time 4 (seconds)",
     "memory_response": "Memory Response",
     "memory_correct": "Memory Result",
-    "memory_rt": "Memory RT (s)",
-    "thought_probe_response": "Thought Probe Number",
+    "memory_rt": "Memory Reaction Time (seconds)",
+    "thought_probe_response": "Thought Category Number",
     "thought_probe_label": "Thought Category",
-    "thought_probe_rt": "Thought Probe RT (s)",
-    "trial_start_time": "Trial Start (s)",
-    "trial_end_time": "Trial End (s)",
-    "trial_duration": "Trial Duration (s)",
+    "thought_probe_rt": "Thought Probe Reaction Time (seconds)",
+    "trial_start_time": "Trial Start Time (seconds)",
+    "trial_end_time": "Trial End Time (seconds)",
+    "trial_duration": "Trial Duration (seconds)",
+}
+
+THOUGHT_LABELS = {
+    "task": "Task",
+    "task experience/performance": "Task Experience / Performance",
+    "everyday things": "Everyday Things",
+    "current state of being": "Current State of Being",
+    "personal worries": "Personal Worries",
+    "daydreams": "Daydreams",
+    "external environment": "External Environment",
+    "other": "Other",
 }
 
 NAVY = "17365D"
@@ -89,10 +100,12 @@ def _friendly_value(header, value):
     upper = value.upper()
     if upper in {"NA", "N/A", "NONE", ""}:
         if header == "changed_position":
-            return "No change"
-        if "correct" in header or "response" in header:
-            return "Not applicable"
-        return "—"
+            return "No Change"
+        if header.startswith("parity_"):
+            return "Not Required"
+        if header.startswith("memory_") or header.startswith("thought_probe_"):
+            return "No Response"
+        return "Not Recorded"
 
     if header == "date":
         return _friendly_date(value)
@@ -111,7 +124,8 @@ def _friendly_value(header, value):
     if "correct" in header:
         return "Correct" if value in {"1", "1.0", "True", "true"} else "Incorrect"
     if header == "thought_probe_label":
-        return value.replace("_", " ").replace("/", " / ").title()
+        normalized = value.replace("_", " ").strip().lower()
+        return THOUGHT_LABELS.get(normalized, value.replace("_", " "))
 
     if header in {"age", "trial_number", "changed_position", "thought_probe_response"} or header.startswith("parity_digit_"):
         number = _number(value)
@@ -155,13 +169,16 @@ def _summary_values(rows):
         for row in rows
         if row.get("thought_probe_label", "").strip().upper() not in {"", "NA", "N/A"}
     )
-    most_common_thought = thought_counts.most_common(1)[0][0] if thought_counts else "No data"
+    most_common_thought = thought_counts.most_common(1)[0][0] if thought_counts else "No Data"
     return {
         "trials": len(rows),
         "memory_accuracy": _mean(memory_correct),
         "memory_rt": _mean(memory_rt),
         "parity_accuracy": _mean(parity_correct),
-        "most_common_thought": most_common_thought.replace("_", " ").title(),
+        "most_common_thought": THOUGHT_LABELS.get(
+            most_common_thought.replace("_", " ").strip().lower(),
+            most_common_thought.replace("_", " "),
+        ),
     }
 
 
@@ -203,11 +220,11 @@ def create_professional_workbook(csv_file, output_file=None):
             cell.fill = PatternFill("solid", fgColor=NAVY)
 
     metadata = [
-        ("Participant ID", first.get("participant", "No data")),
+        ("Participant ID", first.get("participant", "No Data")),
         ("Experiment", _experiment_name(csv_path)),
-        ("Session", first.get("session", "No data")),
-        ("Date", _friendly_date(first.get("date", "")) or "No data"),
-        ("Profile", f"Age {first.get('age', '—')} · {str(first.get('gender', '—')).title()}"),
+        ("Session", first.get("session", "No Data")),
+        ("Date", _friendly_date(first.get("date", "")) or "No Data"),
+        ("Participant Profile", f"Age {first.get('age', '—')} · {str(first.get('gender', '—')).title()}"),
     ]
     for row_index, (label, value) in enumerate(metadata, start=4):
         summary.cell(row_index, 1, label)
@@ -220,6 +237,8 @@ def create_professional_workbook(csv_file, output_file=None):
             cell.border = section_border
             if column == 2:
                 cell.font = Font(color=TEXT, underline=None)
+                if label in {"Participant ID", "Session"}:
+                    cell.number_format = "@"
 
     summary.merge_cells("D4:H4")
     summary["D4"] = "PERFORMANCE OVERVIEW"
@@ -229,12 +248,18 @@ def create_professional_workbook(csv_file, output_file=None):
     summary["D4"].font = Font(bold=True, color="FFFFFF", underline=None)
     summary["D4"].alignment = centered
 
-    overview_headers = ["Trials Completed", "Memory Accuracy", "Average Memory RT", "Parity Accuracy", "Most Common Thought"]
+    overview_headers = [
+        "Trials Completed",
+        "Memory Accuracy",
+        "Average Memory Reaction Time",
+        "Parity Accuracy",
+        "Most Frequent Thought Category",
+    ]
     overview_values = [
         summary_values["trials"],
-        summary_values["memory_accuracy"] if summary_values["memory_accuracy"] is not None else "No data",
-        summary_values["memory_rt"] if summary_values["memory_rt"] is not None else "No data",
-        summary_values["parity_accuracy"] if summary_values["parity_accuracy"] is not None else "No data",
+        summary_values["memory_accuracy"] if summary_values["memory_accuracy"] is not None else "No Data",
+        summary_values["memory_rt"] if summary_values["memory_rt"] is not None else "No Data",
+        summary_values["parity_accuracy"] if summary_values["parity_accuracy"] is not None else "No Data",
         summary_values["most_common_thought"],
     ]
     for column_index, value in enumerate(overview_headers, start=4):
@@ -263,10 +288,10 @@ def create_professional_workbook(csv_file, output_file=None):
     summary["A11"].font = Font(bold=True, color="FFFFFF", underline=None)
     summary["A11"].alignment = centered
     guide = [
-        ("Load 0", "No parity task", BLUE, "Correct", "Correct response", GREEN),
-        ("Load 2", "Two parity decisions", GOLD, "Incorrect", "Incorrect or missed response", RED),
-        ("Load 4", "Four parity decisions", PURPLE, "Not applicable", "No response required", LIGHT),
-        ("Raw source", "Matching CSV is preserved for analysis", "FFFFFF", "Workbook", "Readable presentation copy", "FFFFFF"),
+        ("Load 0", "No parity questions", BLUE, "Correct", "Correct response", GREEN),
+        ("Load 2", "Two parity questions", GOLD, "Incorrect", "Incorrect or missed response", RED),
+        ("Load 4", "Four parity questions", PURPLE, "No Response", "Participant did not answer", RED),
+        ("Raw Data", "CSV preserved for analysis", "FFFFFF", "Not Required", "Question was not presented", LIGHT),
     ]
     for row_index, (left_label, left_text, left_fill, right_label, right_text, right_fill) in enumerate(guide, start=12):
         values = {1: left_label, 2: left_text, 5: right_label, 6: right_text}
@@ -278,7 +303,7 @@ def create_professional_workbook(csv_file, output_file=None):
             cell.border = section_border
 
     summary.merge_cells("A17:H17")
-    summary["A17"] = "Generated automatically when the experiment closes. All response times are shown in seconds."
+    summary["A17"] = "Generated automatically after the experiment closes. All reaction times are reported in seconds."
     summary["A17"].fill = PatternFill("solid", fgColor=LIGHT)
     summary["A17"].font = Font(italic=True, color="475569", underline=None)
     summary["A17"].alignment = centered
@@ -305,6 +330,11 @@ def create_professional_workbook(csv_file, output_file=None):
         cell.alignment = centered
         cell.border = Border(bottom=Side(style="medium", color="FFFFFF"))
     trials.row_dimensions[1].height = 48
+    for text_header in ("participant", "session"):
+        if text_header in headers:
+            text_column = headers.index(text_header) + 1
+            for row_index in range(2, trials.max_row + 1):
+                trials.cell(row_index, text_column).number_format = "@"
 
     row_fills = {"0": BLUE, "2": GOLD, "4": PURPLE}
     load_index = headers.index("load_condition") + 1 if "load_condition" in headers else None

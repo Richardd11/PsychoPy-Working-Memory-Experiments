@@ -4,7 +4,7 @@
 EXPERIMENT 1: Simultaneous Memory Array Presentation - FULL ARRAY TEST
 Working Memory with Cognitive Load and Mind Wandering
 
-VERSION: 2.1.0 - REDESIGNED
+VERSION: 2.2.0 - PRODUCTION
 All 4 colored squares shown AT THE SAME TIME
 TEST: All 4 squares shown again (one may change)
 
@@ -92,9 +92,9 @@ COLOR_NAMES = list(COLORS.keys())
 POSITIONS = [[-0.2, 0.2], [0.2, 0.2], [-0.2, -0.2], [0.2, -0.2]]
 
 THOUGHT_PROBE_CATEGORIES = {
-    '1': 'Task', '2': 'Task experience/performance', '3': 'Everyday things',
-    '4': 'Current state of being', '5': 'Personal worries', '6': 'Daydreams',
-    '7': 'External environment', '8': 'Other'
+    '1': 'Task', '2': 'Task Experience / Performance', '3': 'Everyday Things',
+    '4': 'Current State of Being', '5': 'Personal Worries', '6': 'Daydreams',
+    '7': 'External Environment', '8': 'Other'
 }
 
 # ============================================
@@ -185,7 +185,7 @@ def run_parity_task(load):
     digits = [random.choice([1,2,3,4,6,7,8,9]) for _ in range(load)]
     parity_data = []
     
-    inst = visual.TextStim(win, text='F = ODD    J = EVEN', pos=[0, 0.35], height=0.03)
+    inst = visual.TextStim(win, text='F = Odd    J = Even', pos=[0, 0.35], height=0.03)
     digit_stim = visual.TextStim(win, text='', height=0.15)
     kb = keyboard.Keyboard()
     
@@ -240,7 +240,7 @@ def run_memory_test_full_array(original_colors, positions, change_cond):
     squares = [visual.Rect(win, width=0.1, height=0.1, pos=positions[i],
                            fillColor=COLORS[test_colors[i]]) for i in range(4)]
     
-    inst = visual.TextStim(win, text='Are all 4 colors the SAME as before?\n\nS = SAME (all identical)\nD = DIFFERENT (at least one changed)', 
+    inst = visual.TextStim(win, text='Are all four colors the same as before?\n\nS = Same (all four are identical)\nD = Different (at least one color changed)',
                           pos=[0, 0.35], height=0.03)
     
     kb = keyboard.Keyboard()
@@ -279,18 +279,18 @@ def run_memory_test_full_array(original_colors, positions, change_cond):
     }
 
 def run_thought_probe():
-    text = """What were you just thinking about?
+    text = """What were you thinking about just now?
 
 1 = Task
-2 = Task experience/performance
-3 = Everyday things
-4 = Current state of being
-5 = Personal worries
+2 = Task Experience / Performance
+3 = Everyday Things
+4 = Current State of Being
+5 = Personal Worries
 6 = Daydreams
-7 = External environment
+7 = External Environment
 8 = Other
 
-Press the number."""
+Press the corresponding number."""
     
     text_stim = visual.TextStim(win, text=text, height=0.03, wrapWidth=1.5)
     text_stim.draw()
@@ -346,19 +346,19 @@ def run_trial(trial_info):
 # ============================================
 # MAIN EXPERIMENT
 # ============================================
-show_text("""EXPERIMENT 1: Simultaneous Presentation - FULL ARRAY TEST
+show_text("""EXPERIMENT 1: SIMULTANEOUS PRESENTATION
 
-You will see 4 colored squares appear AT THE SAME TIME.
+Four colored squares will appear at the same time.
 
-REMEMBER all 4 colors!
+Remember all four colors.
 
-After a delay and some tasks, you will see 4 colored squares AGAIN.
+After a short delay and a parity task, all four squares will appear again.
 
-Your task: Decide if ALL 4 colors are the SAME as before,
-or if at least ONE color changed.
+Decide whether all four colors are the same as before
+or at least one color has changed.
 
-S = SAME (all 4 identical)
-D = DIFFERENT (at least 1 changed)
+S = Same
+D = Different
 
 Press SPACE to start practice.""", keys=['space'])
 
@@ -386,9 +386,9 @@ for trial in practice_trials[:6]:
 show_text("""Practice complete!
 
 Remember:
-- Memorize ALL 4 colors
-- After tasks, check if ALL are the same
-- S = All SAME | D = At least one DIFFERENT
+- Remember all four colors.
+- S means Same.
+- D means Different.
 
 Press SPACE to begin the main experiment.
 
@@ -423,11 +423,12 @@ for i, trial in enumerate(main_trials):
 
 Press SPACE to continue.""", keys=['space'])
 
-show_text("""Experiment 1 Complete!
+show_text("""Experiment 1 complete!
 
 Thank you for your participation!
 
-Data saved in: data/ folder
+The CSV data is saved. A formatted Excel report will be created
+after this window closes.
 
 Press SPACE to exit.""", keys=['space'])
 
