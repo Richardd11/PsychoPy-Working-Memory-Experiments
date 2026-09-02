@@ -29,9 +29,20 @@ Unlike traditional change detection paradigms that test single items, this imple
 
 ```bash
 # Install Python 3.8 or higher
-# Install PsychoPy
-pip install psychopy
+
+# Install required packages
+pip install -r requirements.txt
+
+# Or use the batch file (Windows)
+INSTALL_DEPENDENCIES.bat
 ```
+
+**Required packages:**
+- psychopy
+- pandas
+- openpyxl (for Excel export)
+- matplotlib (for visualizations)
+- scipy (for statistics)
 
 ### Running the Experiments
 
@@ -90,6 +101,31 @@ D = DIFFERENT (at least one changed)
 
 All data saved to `data/` folder as CSV files.
 
+### 🎨 NEW: Professional Excel Export
+
+Convert your CSV data to **beautifully formatted Excel workbooks** with one click!
+
+```bash
+# Windows
+EXPORT_TO_EXCEL.bat
+
+# Manual
+python export_to_excel.py
+```
+
+**Features:**
+- ✅ **Color-coded accuracy** (Green=Correct ✓ | Red=Incorrect ✗ | Yellow=N/A)
+- 📊 **Alternating row colors** for better readability
+- 📐 **Centered text alignment** - professional look
+- 📈 **Automatic summary sheet** with performance statistics
+- 🎯 **Performance by load condition** (0, 2, 4 digits)
+- 📏 **Auto-adjusted column widths** - no more squished text!
+- 🔒 **Frozen header rows** - headers stay visible when scrolling
+
+**Output:** `participant_001_data_FORMATTED.xlsx`
+
+See [EXCEL_EXPORT_GUIDE.md](EXCEL_EXPORT_GUIDE.md) for detailed instructions.
+
 ### Key Variables
 
 | Variable | Description |
@@ -117,6 +153,10 @@ PsychoPy-Working-Memory-Experiments/
 ├── experiment2_sequential.py        # Exp 2: Colors one by one
 ├── RUN_EXPERIMENT1.bat              # Windows launcher
 ├── RUN_EXPERIMENT2.bat              # Windows launcher
+├── export_to_excel.py               # ✨ NEW: Professional Excel export
+├── EXPORT_TO_EXCEL.bat              # ✨ One-click Excel conversion
+├── requirements.txt                 # Required Python packages
+├── INSTALL_DEPENDENCIES.bat         # Auto-install packages
 ├── conditions/                      # Trial condition files
 │   ├── practice_conditions.csv
 │   ├── experiment1_conditions.csv
@@ -127,6 +167,7 @@ PsychoPy-Working-Memory-Experiments/
 ├── ENHANCE_DATA.bat                 # Analysis launcher
 ├── COMPLETE_GUIDE.html              # Interactive documentation
 ├── VISUAL_EXPLANATION.html          # Why full array test?
+├── EXCEL_EXPORT_GUIDE.md            # ✨ Excel export instructions
 ├── CLIENT_README.md                 # Client-friendly guide
 ├── DATA_DICTIONARY.md               # Variable descriptions
 └── README.md                        # This file
