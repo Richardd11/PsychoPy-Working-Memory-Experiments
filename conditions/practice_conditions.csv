@@ -1,0 +1,7 @@
+trial_number,load_condition,change_condition,tested_position
+1,0,change,1
+2,0,no_change,2
+3,2,change,3
+4,2,no_change,4
+5,4,change,1
+6,4,no_change,2

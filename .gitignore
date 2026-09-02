@@ -3,6 +3,7 @@ data/
 *.psydat
 *.log
 *.csv
+!conditions/*.csv
 *_lastrun.py
 
 # Python
@@ -48,3 +49,6 @@ desktop.ini
 *.tmp
 *.bak
 *.backup
+
+# Generated client delivery packages
+*.zip

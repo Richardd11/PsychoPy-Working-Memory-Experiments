@@ -18,6 +18,7 @@ import random
 import os
 import csv
 from datetime import datetime
+from experiment_runtime import create_compatible_window, sanitize_participant_id
 
 # ============================================
 # TIMING CONSTANTS
@@ -55,6 +56,8 @@ if not expInfo['participant'].strip():
     error_dlg.show()
     core.quit()
 
+expInfo['participant'] = sanitize_participant_id(expInfo['participant'])
+
 expInfo['date'] = data.getDateStr()
 filename = _thisDir + os.sep + f'data/{expInfo["participant"]}_Experiment1_Simultaneous_FullArray_{expInfo["date"]}'
 csv_filename = filename + '_data.csv'
@@ -70,52 +73,9 @@ if os.path.exists(csv_filename):
     elif result[0] == 'New Session':
         csv_filename = filename + f'_{datetime.now().strftime("%H%M%S")}_data.csv'
 
-# Create window
-print("Creating experiment window...")
-try:
-    # Try fullscreen first
-    win = visual.Window([1920, 1080], fullscr=True, units='height', color=[0,0,0], allowGUI=False)
-    print("Fullscreen window created successfully")
-except Exception as e:
-    print(f"Fullscreen failed: {e}")
-    print("Trying windowed mode without advanced graphics...")
-    try:
-        # Try windowed mode with safer settings
-        win = visual.Window(
-            size=[1400, 900], 
-            fullscr=False, 
-            units='height', 
-            color=[0,0,0],
-            allowGUI=True,
-            useFBO=False,  # Disable framebuffer objects (can cause shader errors)
-            useRetina=False  # Disable retina support
-        )
-        print("Windowed mode created successfully")
-    except Exception as e2:
-        print(f"Window creation failed completely: {e2}")
-        print("\nYour graphics card may not support the required features.")
-        print("Please update your graphics card drivers.")
-        input("\nPress Enter to exit...")
-        core.quit()
-
-# Measure frame rate (show message while measuring)
-try:
-    measuring_text = visual.TextStim(win, text='Measuring frame rate...\nPlease wait...', height=0.05)
-    measuring_text.draw()
-    win.flip()
-    
-    frameRate = win.getActualFrameRate()
-    frameDur = 1.0/60.0 if frameRate is None else 1.0/round(frameRate)
-    
-    # Show completion
-    ready_text = visual.TextStim(win, text='Ready!\n\nStarting experiment...', height=0.05)
-    ready_text.draw()
-    win.flip()
-    core.wait(1.0)
-except Exception as e:
-    print(f"Frame rate measurement error: {e}")
-    frameRate = 60.0
-    frameDur = 1.0/60.0
+# Create and fully render-test the window. If a graphics error appears only
+# during the first draw/flip, this also retries using safer windowed modes.
+win, frameRate, frameDur = create_compatible_window(visual, core)
 
 globalClock = core.Clock()
 

@@ -1,9 +1,1 @@
-# PsychoPy Working Memory Experiments
-# Required Python packages
-
 psychopy>=2023.1.0
-pandas>=1.5.0
-numpy>=1.23.0
-openpyxl>=3.1.0  # For Excel export with formatting
-matplotlib>=3.5.0  # For data visualization
-scipy>=1.9.0  # For statistical analysis
