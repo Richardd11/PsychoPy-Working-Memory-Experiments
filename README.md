@@ -25,19 +25,48 @@ Unlike traditional change detection paradigms that test single items, this imple
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### ⚠️ IMPORTANT: What You Need to Install
 
+**The GitHub download ONLY includes the experiment code.**
+
+You still need to install separately:
+
+1. **PsychoPy** (~500 MB) - Download from: https://www.psychopy.org/download.html
+2. **Python packages** (~100 MB) - Auto-install by running `INSTALL_DEPENDENCIES.bat`
+
+### 📋 Step-by-Step Setup
+
+**Step 1:** Download this repository (ZIP file from GitHub)
+
+**Step 2:** Extract the ZIP file
+
+**Step 3:** Install PsychoPy Standalone from https://www.psychopy.org/download.html
+
+**Step 4:** Run `INSTALL_DEPENDENCIES.bat` (installs required packages)
+
+**Step 5:** Run `TEST_SETUP.bat` to verify everything works
+
+**Step 6:** Ready to go! Run `RUN_EXPERIMENT1.bat` or `RUN_EXPERIMENT2.bat`
+
+**📖 Detailed guide:** See [START_HERE.md](START_HERE.md) for complete instructions
+
+### Required Software (not included in download)
+
+**PsychoPy Standalone** (includes Python):
+- Download: https://www.psychopy.org/download.html
+- Size: ~500 MB
+- Installation time: 10 minutes
+
+**Python Packages** (auto-installed):
 ```bash
-# Install Python 3.8 or higher
-
-# Install required packages
-pip install -r requirements.txt
-
-# Or use the batch file (Windows)
+# Windows: Just run this batch file
 INSTALL_DEPENDENCIES.bat
+
+# Manual installation:
+pip install -r requirements.txt
 ```
 
-**Required packages:**
+**Packages installed:**
 - psychopy
 - pandas
 - openpyxl (for Excel export)
